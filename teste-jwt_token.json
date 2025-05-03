@@ -1,0 +1,82 @@
+{
+  "info": {
+    "_postman_id": "f06f8ad1-ec0d-4b0f-a672-a57c5450e0f3",
+    "name": "JWT Testes Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5063/api/v1/Auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5063",
+          "path": ["api", "v1", "Auth", "login"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const jsonData = pm.response.json();",
+              "pm.environment.set(\"jwt_token\", jsonData.token);",
+              "pm.test(\"Token JWT recebido\", function () {",
+              "    pm.expect(jsonData.token).to.not.be.undefined;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar Usuários (requer token)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5063/api/v1/Auth/listar-usuarios",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5063",
+          "path": ["api", "v1", "Auth", "listar-usuarios"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Resposta 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
